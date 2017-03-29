@@ -29,24 +29,34 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
+
+import org.jmxtrans.embedded.QueryResult;
 import org.jmxtrans.embedded.output.AbstractOutputWriter;
+import org.jmxtrans.embedded.output.OutputWriter;
+import org.jmxtrans.embedded.util.io.IoRuntimeException;
+import org.jmxtrans.embedded.util.io.IoUtils;
 import org.jmxtrans.embedded.util.io.IoUtils2;
+import org.jmxtrans.embedded.util.time.SystemClock;
 
 /**
  * Output writer for InfluxDb.
- * 
- * @author Kristoffer Erlandsson
  */
-public class InfluxDbOutputWriter extends AbstractOutputWriter {
+public class InfluxDbOutputWriter extends AbstractOutputWriter implements OutputWriter {
 
+	public final static String SETTING_ENABLED = "enabled";
+	private final AtomicInteger exceptionCounter = new AtomicInteger();
+	
     private URL url;
     private String database;
     private String user; // Null if not configured
@@ -56,35 +66,41 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
     private List<InfluxMetric> batchedMetrics = new ArrayList<InfluxMetric>();
     private int connectTimeoutMillis;
     private int readTimeoutMillis;
-    private final Clock clock;
     private boolean enabled;
-    public final static String SETTING_ENABLED = "enabled";
-
+    /**
+	 * Optional proxy for the http API calls
+	 */
+	@Nullable
+	private Proxy proxy;
+	
     public InfluxDbOutputWriter() {
-        this.clock = new SystemCurrentTimeMillisClock();
     }
 
     /**
-     * Test hook for supplying a fake clock.
-     */
-    InfluxDbOutputWriter(Clock clock) {
-        this.clock = clock;
-    }
-
-    @Override
-    public void postConstruct(Map<String, String> settings) {
-        enabled = getBoolean(settings, SETTING_ENABLED, true);
-        String urlStr = ConfigurationUtils.getString(settings, "url");
-        database = ConfigurationUtils.getString(settings, "database");
-        user = ConfigurationUtils.getString(settings, "user", null);
-        password = ConfigurationUtils.getString(settings, "password", null);
-        retentionPolicy = ConfigurationUtils.getString(settings, "retentionPolicy", null);
-        String tagsStr = ConfigurationUtils.getString(settings, "tags", "");
+	 * Initial setup for the writer class. Loads in settings and initializes one-time setup variables like instanceId.
+	 */
+	@Override
+	public void start() {
+		
+        enabled = getBooleanSetting(SETTING_ENABLED, true);
+        String urlStr = getStringSetting("url");
+        database = getStringSetting("database");
+        user = getStringSetting("user", null);
+        password = getStringSetting("password", null);
+        retentionPolicy = getStringSetting("retentionPolicy", null);
+        String tagsStr = getStringSetting("tags", "");
         tags = InfluxMetricConverter.tagsFromCommaSeparatedString(tagsStr);
-        connectTimeoutMillis = ConfigurationUtils.getInt(settings, "connectTimeoutMillis", 3000);
-        readTimeoutMillis = ConfigurationUtils.getInt(settings, "readTimeoutMillis", 5000);
+        connectTimeoutMillis = getIntSetting("connectTimeoutMillis", 3000);
+        readTimeoutMillis = getIntSetting("readTimeoutMillis", 5000);
         url = parseUrlStr(getWriteEndpointForUrlStr(urlStr));
-        logger.log(getInfoLevel(), "InfluxDbOutputWriter is configured with url=" + urlStr
+        
+        if (getStringSetting(SETTING_PROXY_HOST, null) != null && !getStringSetting(SETTING_PROXY_HOST).isEmpty()) {
+			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getStringSetting(SETTING_PROXY_HOST), getIntSetting(SETTING_PROXY_PORT)));
+		}
+		
+		logger.info("Starting Stackdriver writer connected to '{}', proxy {} ...", url, proxy);
+        
+        logger.info( "InfluxDbOutputWriter is configured with url=" + urlStr
                 + ", database=" + database
                 + ", user=" + user
                 + ", password=" + (password != null ? "****" : null)
@@ -114,30 +130,38 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
         return sb.toString();
     }
 
-    @Override
+	@Override
+	public void write(Iterable<QueryResult> results) {
+		
+		try {
+			
+			logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			if(!enabled) return;
+	        String body = convertMetricsToLines(batchedMetrics);
+	        String queryString = buildQueryString();
+	    	logger.info( "Sending to influx (" + url + "):\n" + body);
+	        batchedMetrics.clear();
+	        sendMetrics(queryString, body);
+			 
+		} catch (Exception e) {
+			exceptionCounter.incrementAndGet();
+			logger.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
+		}
+	}
+	
+	
     public void writeInvocationResult(String invocationName, Object value) throws IOException {
         if(!enabled) return;
         writeQueryResult(invocationName, null, value);
     }
 
-    @Override
     public void writeQueryResult(String metricName, String metricType, Object value) throws IOException {
         if(!enabled) return;
-        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(metricName, value, tags, clock.getCurrentTimeMillis());
+        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(metricName, value, tags, SystemClock.now());
         batchedMetrics.add(metric);
     }
 
-    @Override
-    public void postCollect() throws IOException {
-        if(!enabled) return;
-        String body = convertMetricsToLines(batchedMetrics);
-        String queryString = buildQueryString();
-        if (logger.isLoggable(getTraceLevel())) {
-            logger.log(getTraceLevel(), "Sending to influx (" + url + "):\n" + body);
-        }
-        batchedMetrics.clear();
-        sendMetrics(queryString, body);
-    }
+ 
 
     private void sendMetrics(String queryString, String body) throws IOException {
         HttpURLConnection conn = createAndConfigureConnection();
@@ -148,15 +172,15 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
         }
     }
 
-    private void sendMetrics(String body, HttpURLConnection conn) throws IOException {
-        writeMetrics(conn, body);
-        int responseCode = conn.getResponseCode();
+    private void sendMetrics(String body, HttpURLConnection urlConnection) throws IOException {
+        writeMetrics(urlConnection, body);
+        int responseCode = urlConnection.getResponseCode();
         if (responseCode / 100 != 2) {
-            throw new RuntimeException("Failed to write metrics, response code: " + responseCode
-                    + ", response message: " + conn.getResponseMessage());
+        	exceptionCounter.incrementAndGet();
+            throw new RuntimeException("Failed to write metrics, response code: " + responseCode  + ", response message: " + urlConnection.getResponseMessage());
         }
-        String response = readResponse(conn);
-        logger.log(getTraceLevel(), "Response from influx: " + response);
+        String response = readResponse(urlConnection);
+        logger.info("Response from influx: " + response);
     }
 
     private HttpURLConnection createAndConfigureConnection() throws ProtocolException {
@@ -167,10 +191,16 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
         conn.setRequestMethod("POST");
         return conn;
     }
-
+    
     private HttpURLConnection openHttpConnection() {
         try {
-            return (HttpURLConnection) url.openConnection();
+    		HttpURLConnection urlConnection = null;
+        	if (proxy == null) {
+    			urlConnection = (HttpURLConnection) url.openConnection();
+    		} else {
+    			urlConnection = (HttpURLConnection) url.openConnection(proxy);
+    		}
+            return urlConnection;
         } catch (Exception e) {
             throw new IoRuntimeException("Failed to create HttpURLConnection to " + url + " - is it a valid HTTP url?",  e);
         }
@@ -197,7 +227,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
         InputStream is = null;
         try {
         	is = conn.getInputStream();
-        	IoUtils.copy(is, baos);
+        	IoUtils2.copy(is, baos);
 		} finally {
 			if(is != null){
 				IoUtils2.closeQuietly(is);
@@ -227,5 +257,6 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter {
         }
         return sb.toString();
     }
+
 
 }

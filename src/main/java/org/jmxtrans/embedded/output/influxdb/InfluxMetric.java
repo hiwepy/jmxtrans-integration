@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.jmxtrans.agent.util.StringUtils2;
+import org.jmxtrans.embedded.util.StringUtils2;
 
 /**
  * @author Kristoffer Erlandsson
