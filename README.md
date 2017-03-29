@@ -4,7 +4,7 @@ embedded-jmxtrans 整合  Spring、Servlet、InfluxDB
 
 ## 1、Servlet Integration
 
-###参考EmbeddedJmxTransLoaderListener对象注解
+参考EmbeddedJmxTransLoaderListener对象注解
 
 <context-param>
 	<param-name>jmxtrans.config</param-name>
@@ -24,7 +24,7 @@ embedded-jmxtrans 整合  Spring、Servlet、InfluxDB
 本人参考 embedded-jmxtrans 的github地址（https://github.com/jmxtrans/embedded-jmxtrans/wiki）配置后，测试完全无效。
 阅读代码后采用另种方式：
 
-###配置EmbeddedJmxTransFactory
+配置EmbeddedJmxTransFactory
 
 <bean id="jmxtrans" class="org.jmxtrans.embedded.spring.EmbeddedJmxTransFactory" destroy-method="destroy" scope="singleton">
 	<!-- JMX对象名称  -->
@@ -44,11 +44,11 @@ embedded-jmxtrans 整合  Spring、Servlet、InfluxDB
 	</property>
 </bean>
 
-###使用EmbeddedJmxTransFactory；此处发现如果不引用上面的对象，则无法调用getObject方法实现对象初始化
+使用EmbeddedJmxTransFactory；此处发现如果不引用上面的对象，则无法调用getObject方法实现对象初始化
 <bean class="org.jmxtrans.embedded.EmbeddedJmxTransLauncher">
 	<property name="jmxtrans" ref="jmxtrans"/>
 </bean>
 
-## 2、InfluxDB Integration
+## 3、InfluxDB Integration
 
 待续...
