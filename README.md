@@ -21,7 +21,7 @@ embedded-jmxtrans 整合  Spring、Servlet、InfluxDB
 ```
 ## 2、Spring Integration
 
-本人参考 embedded-jmxtrans 的github地址（https://github.com/jmxtrans/embedded-jmxtrans/wiki）配置后，测试完全无效。
+本人参考 embedded-jmxtrans 的github地址 https://github.com/jmxtrans/embedded-jmxtrans/wiki 配置后，测试完全无效。
 阅读代码后采用另种方式：
 
 配置EmbeddedJmxTransFactory
