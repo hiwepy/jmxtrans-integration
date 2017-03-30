@@ -423,11 +423,10 @@
 			<artifactId>embedded-jmxtrans</artifactId>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.influxdb</groupId>
 			<artifactId>influxdb-java</artifactId>
-			<scope>provided</scope>
-		</dependency>
+		</dependency> -->
 		
 
 	</dependencies>

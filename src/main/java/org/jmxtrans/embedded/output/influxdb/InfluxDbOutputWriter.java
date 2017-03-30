@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
@@ -83,6 +84,9 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	public void start() {
 		
         enabled = getBooleanSetting(SETTING_ENABLED, true);
+    	
+        if(!enabled) return;
+    	
         String urlStr = getStringSetting("url");
         database = getStringSetting("database");
         user = getStringSetting("user", null);
@@ -100,6 +104,8 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 		
 		logger.info("Starting Stackdriver writer connected to '{}', proxy {} ...", url, proxy);
         
+		
+		
         logger.info( "InfluxDbOutputWriter is configured with url=" + urlStr
                 + ", database=" + database
                 + ", user=" + user
@@ -134,12 +140,18 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	public void write(Iterable<QueryResult> results) {
 		
 		try {
-			
-			logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
 			if(!enabled) return;
+			logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			
+			for (QueryResult result : results) {
+				String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
+		        logger.debug(msg);
+				writeInvocationResult(result.getName(), result.getValue());
+			}
+			
 	        String body = convertMetricsToLines(batchedMetrics);
 	        String queryString = buildQueryString();
-	    	logger.info( "Sending to influx (" + url + "):\n" + body);
+	    	logger.debug( "Sending to influx (" + url + "):\n" + body);
 	        batchedMetrics.clear();
 	        sendMetrics(queryString, body);
 			 
@@ -180,7 +192,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
             throw new RuntimeException("Failed to write metrics, response code: " + responseCode  + ", response message: " + urlConnection.getResponseMessage());
         }
         String response = readResponse(urlConnection);
-        logger.info("Response from influx: " + response);
+        logger.debug("Response from influx: " + response);
     }
 
     private HttpURLConnection createAndConfigureConnection() throws ProtocolException {
