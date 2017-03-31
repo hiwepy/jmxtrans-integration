@@ -53,4 +53,43 @@ embedded-jmxtrans 整合  Spring、Servlet、InfluxDB
 
 ## 3、InfluxDB Integration
 
-待续...
+在第二则中提到配置文件 jmxtrans.json；为了将数据自己输出到InfluxDB,我拷贝了jmxtrans-output-influxdb的代码，做了一些调整，配置如下：
+
+
+```json
+{
+    "queries": [
+    	{
+            "objectName": "Catalina:type=Manager,context=/,host=*",
+            "resultAlias": "application.activeSessions",
+            "attributes": [
+                "activeSessions"
+            ]
+
+        }
+    ],
+    "outputWriters": [
+        {
+	        "@class": "org.jmxtrans.embedded.output.Slf4jWriter",
+	        "settings": {
+	            "enabled": "${jmxtrans.writer.slf4j.enabled:true}"
+	        }
+    	},
+    	{
+	        "@class": "org.jmxtrans.embedded.output.influxdb.InfluxDbOutputWriter",
+	        "settings": {
+	            "enabled": "${jmxtrans.writer.influxdb.enabled:true}",
+	            "url": "${jmxtrans.writer.influxdb.url:http://localhost:8086}",
+	            "database": "${jmxtrans.writer.influxdb.database:APP_Metrics}",
+	            "user": "${jmxtrans.writer.influxdb.user:admin}",
+	            "password": "${jmxtrans.writer.influxdb.password:admin}",
+	            "tags": "${jmxtrans.writer.influxdb.tags:host=#hostname#}"
+	            
+	        }
+    	}
+    ]
+}
+```
+
+
+

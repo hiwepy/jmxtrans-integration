@@ -25,9 +25,8 @@ package org.jmxtrans.embedded.output.influxdb;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.jmxtrans.embedded.util.HostnameUtil;
+import org.jmxtrans.embedded.util.tag.TagUtil;
 
 /**
  * @author Kristoffer Erlandsson
@@ -71,27 +70,7 @@ public class InfluxMetricConverter {
             throw new FailedToConvertToInfluxMetricException(
                     "Error when parsing influx tags from substring " + part + ", must be on format <name>=<value>,...");
         }
-        String tagVal = nameAndValue[1].trim();
-        
-        // 1、获取系统的相关属性，包括文件编码、操作系统名称、区域、用户名等，此属性一般由jvm自动获取，不能设置
-        Properties properties = System.getProperties();
-        if(properties.contains(tagVal)){
-        	tagVal = System.getProperty(tagVal);
-        }
-        
-        // 2、获取指定的环境变量的值。环境变量是依赖于系统的外部命名值
- 		String result = System.getenv(tagVal);
- 		if (result != null) {
- 			tagVal =  result;
- 		}
-     		
-        //3、获取特殊标记值
-        if("#hostname#".equalsIgnoreCase(nameAndValue[1].trim())){
-        	tagVal = HostnameUtil.getHostName();
-        }
-        
-        InfluxTag tag = new InfluxTag(nameAndValue[0].trim(), tagVal);
-        return tag;
+        return TagUtil.parseTag(nameAndValue[0].trim(), nameAndValue[1].trim());
     }
 
     @SuppressWarnings("serial")
