@@ -1,0 +1,82 @@
+{
+    "queries": [
+        {
+            "objectName": "Catalina:type=ThreadPool,name=\"http-nio-*\"",
+            "resultAlias": "tomcat.thread-pool.http-nio",
+            "attributes": [
+                "currentThreadCount",
+                "currentThreadsBusy"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=ThreadPool,name=\"ajp-nio-*\"",
+            "resultAlias": "tomcat.thread-pool.ajp-nio",
+            "attributes": [
+                "currentThreadCount",
+                "currentThreadsBusy"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=Manager,path=*,host=*",
+            "resultAlias": "tomcat.manager.%host%.%path%,attr=#attribute#",
+            "attributes": [
+                "activeSessions",
+                "expiredSessions"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"http-nio-*\"",
+            "resultAlias": "tomcat.global-request-processor.http-nio,attr=#attribute#",
+            "attributes": [
+                "bytesReceived",
+                "bytesSent",
+                "errorCount",
+                "processingTime",
+                "requestCount"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"ajp-nio-*\"",
+            "resultAlias": "tomcat.global-request-processor.ajp-nio,attr=#attribute#",
+            "attributes": [
+                "bytesReceived",
+                "bytesSent",
+                "errorCount",
+                "processingTime",
+                "requestCount"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=DataSource,path=*,host=*,class=javax.sql.DataSource,name=*",
+            "resultAlias": "tomcat.data-source.%host%.%path%.%name%,attr=#attribute#",
+            "attributes": [
+                "numActive",
+                "numIdle"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=DataSource,class=javax.sql.DataSource,name=*",
+            "resultAlias": "tomcat.data-source.%name%,attr=#attribute#",
+            "attributes": [
+                "numActive",
+                "numIdle"
+            ]
+        },
+        {
+            "objectName": "tomcat.jdbc:type=ConnectionPool,engine=Catalina,context=*,host=*,class=org.apache.tomcat.jdbc.pool.DataSource,name=*",
+            "resultAlias": "tomcat.jdbc-pool.%host%.%context%.%name%,attr=#attribute#",
+            "attributes": [
+                "WaitCount"
+            ]
+        },
+        {
+            "objectName": "Catalina:j2eeType=Servlet,name=*,WebModule=*,J2EEApplication=none,J2EEServer=none",
+            "resultAlias": "tomcat.servlet.%WebModule%.%name%,attr=#attribute#",
+            "attributes": [
+                "errorCount",
+                "processingTime",
+                "requestCount"
+            ]
+        }
+    ]
+}

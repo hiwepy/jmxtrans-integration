@@ -1,0 +1,79 @@
+
+{
+    "queries": [
+        {
+            "objectName": "java.lang:type=Memory",
+            "resultAlias": "jvm.memory.#attribute#,key=#key#",
+            "attributes": [
+                {
+                    "name": "HeapMemoryUsage",
+                    "keys": ["committed", "used", "init", "max"]
+                },
+                {
+                    "name": "NonHeapMemoryUsage",
+                    "keys": ["committed", "used", "init", "max"]
+                }
+            ]
+
+        },
+        {
+            "objectName": "java.lang:type=MemoryPool,name=*",
+            "resultAlias": "jvm.memory.pool.%name%.#attribute#,key=#key#",
+            "attributes": [
+                {
+                    "name": "Usage",
+                    "keys": ["committed", "used", "init", "max"]
+                },
+                {
+                    "name": "PeakUsage",
+                    "keys": ["committed", "used", "init", "max"]
+                }
+            ]
+        },
+        {
+            "objectName": "java.lang:type=Runtime",
+            "resultAlias": "jvm.runtime",
+            "attributes": [
+                "Uptime"
+            ]
+
+        },
+        {
+            "objectName": "java.lang:type=GarbageCollector,name=*",
+            "resultAlias": "jvm.gc.%name%",
+            "attributes": [
+                "CollectionCount",
+                "CollectionTime"
+            ]
+        },
+        {
+            "objectName": "java.lang:type=Threading",
+            "resultAlias": "jvm.thread",
+            "attributes": [
+                "ThreadCount",
+                "PeakThreadCount",
+                "CurrentThreadCpuTime"
+            ]
+        },
+        {
+            "objectName": "java.lang:type=ClassLoading",
+            "resultAlias": "jvm.classes",
+            "attributes": [
+                "LoadedClassCount"
+            ]
+        },
+        {
+            "objectName": "java.lang:type=OperatingSystem",
+            "resultAlias": "jvm.os",
+            "attributes": [
+                "CommittedVirtualMemorySize",
+                "FreePhysicalMemorySize",
+                "FreeSwapSpaceSize",
+                "OpenFileDescriptorCount",
+                "ProcessCpuTime",
+                "SystemLoadAverage"
+            ]
+
+        }
+    ]
+}
