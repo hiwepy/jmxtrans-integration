@@ -2,29 +2,8 @@ package org.jmxtrans.embedded.util.tag;
 
 import java.util.Properties;
 
-import org.jmxtrans.embedded.output.influxdb.InfluxTag;
-
 public class TagUtil {
 
-    public static InfluxTag parseTag(String tagName,String tagVal) {  
-    	
-    	//1、环境变量取值
-    	String tagVal_ = getTagValFromEnv(tagVal);
-    	
-    	//2、获取特殊标记值
-        if(tagVal.equalsIgnoreCase(TagEnum.CANONICAL_HOST_NAME.getName())){
-        	tagVal_ = TagEnum.CANONICAL_HOST_NAME.getDefault();
-        }else if(tagVal.equalsIgnoreCase(TagEnum.HOST_NAME.getName())){
-        	tagVal_ = TagEnum.HOST_NAME.getDefault();
-        }else if(tagVal.equalsIgnoreCase(TagEnum.HOST_ADDRESS.getName())){
-        	tagVal_ = TagEnum.HOST_ADDRESS.getDefault();
-        }else if(tagVal.equalsIgnoreCase(TagEnum.MAC_ADDRESS.getName())){
-        	tagVal_ = TagEnum.MAC_ADDRESS.getDefault();
-        }
-        
-        return new InfluxTag(tagName, tagVal_);
-    }
-	
     public static String getTagValFromEnv(String tagEnvName) {
 		assert tagEnvName != null;
 		String tagVal = null;

@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
+import org.jmxtrans.embedded.ExtendedResultNameStrategy;
 import org.jmxtrans.embedded.QueryResult;
 import org.jmxtrans.embedded.output.AbstractOutputWriter;
 import org.jmxtrans.embedded.output.OutputWriter;
@@ -93,7 +94,11 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         password = getStringSetting("password", null);
         retentionPolicy = getStringSetting("retentionPolicy", null);
         String tagsStr = getStringSetting("tags", "");
-        tags = InfluxMetricConverter.tagsFromCommaSeparatedString(tagsStr);
+        
+        //从新定义ResultNameStrategy
+        setStrategy(new ExtendedResultNameStrategy());
+        
+        tags = InfluxMetricConverter.tagsFromCommaSeparatedString(this.getStrategy(),tagsStr);
         connectTimeoutMillis = getIntSetting("connectTimeoutMillis", 3000);
         readTimeoutMillis = getIntSetting("readTimeoutMillis", 5000);
         url = parseUrlStr(getWriteEndpointForUrlStr(urlStr));
@@ -169,11 +174,9 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 
     public void writeQueryResult(String metricName, String metricType, Object value) throws IOException {
         if(!enabled) return;
-        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(metricName, value, tags, SystemClock.now());
+        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(this.getStrategy(), metricName, value, tags, SystemClock.now());
         batchedMetrics.add(metric);
     }
-
- 
 
     private void sendMetrics(String queryString, String body) throws IOException {
         HttpURLConnection conn = createAndConfigureConnection();

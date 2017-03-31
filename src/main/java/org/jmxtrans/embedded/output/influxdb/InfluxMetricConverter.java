@@ -26,6 +26,7 @@ package org.jmxtrans.embedded.output.influxdb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jmxtrans.embedded.ResultNameStrategy;
 import org.jmxtrans.embedded.util.tag.TagUtil;
 
 /**
@@ -33,8 +34,8 @@ import org.jmxtrans.embedded.util.tag.TagUtil;
  */
 public class InfluxMetricConverter {
 
-    public static InfluxMetric convertToInfluxMetric(String metricName, Object value, List<InfluxTag> additionalTags, long timestamp) {
-        List<InfluxTag> tagsFromMetricName = parseTags(metricName);
+    public static InfluxMetric convertToInfluxMetric(ResultNameStrategy strategy,String metricName, Object value, List<InfluxTag> additionalTags, long timestamp) {
+        List<InfluxTag> tagsFromMetricName = parseTags(strategy,metricName);
         List<InfluxTag> allTags = new ArrayList<InfluxTag>(additionalTags);
         allTags.addAll(tagsFromMetricName);
         return new InfluxMetric(parseMeasurement(metricName), allTags, value, timestamp);
@@ -44,33 +45,43 @@ public class InfluxMetricConverter {
         return metricName.split(",")[0].trim();
     }
 
-    private static List<InfluxTag> parseTags(String metricName) {
+    private static List<InfluxTag> parseTags(ResultNameStrategy strategy,String metricName) {
         int startOfTags = metricName.indexOf(',');
         if (startOfTags < 0) {
             return new ArrayList<InfluxTag>();
         }
-        return tagsFromCommaSeparatedString(metricName.substring(startOfTags + 1));
+        return tagsFromCommaSeparatedString(strategy,metricName.substring(startOfTags + 1));
     }
 
-    public static List<InfluxTag> tagsFromCommaSeparatedString(String s) {
+    public static List<InfluxTag> tagsFromCommaSeparatedString(ResultNameStrategy strategy,String s) {
         List<InfluxTag> tags = new ArrayList<InfluxTag>();
         if (s.trim().isEmpty()) {
             return tags;
         }
         String[] parts = s.split(",");
         for (String tagPart : parts) {
-            tags.add(parseOneTag(tagPart));
+            tags.add(parseOneTag(strategy,tagPart));
         }
         return tags;
     }
 
-    private static InfluxTag parseOneTag(String part) {
+    private static InfluxTag parseOneTag(ResultNameStrategy strategy,String part) {
         String[] nameAndValue = part.trim().split("=");
         if (nameAndValue.length != 2) {
             throw new FailedToConvertToInfluxMetricException(
                     "Error when parsing influx tags from substring " + part + ", must be on format <name>=<value>,...");
         }
-        return TagUtil.parseTag(nameAndValue[0].trim(), nameAndValue[1].trim());
+        String tagName = nameAndValue[0].trim();
+        String tagVal = nameAndValue[1].trim();
+        //1、环境变量取值
+    	String tagVal_ = TagUtil.getTagValFromEnv(tagVal);
+    	
+    	//2、使用结果名策略对象获取值
+    	if(tagVal_ == null){
+    		tagVal_ = strategy.resolveExpression(tagVal);
+    	}
+        
+        return new InfluxTag(tagName, tagVal_);
     }
 
     @SuppressWarnings("serial")
