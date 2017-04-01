@@ -18,7 +18,7 @@
         },
         {
             "objectName": "Catalina:type=Manager,context=*,host=*",
-            "resultAlias": "tomcat.manager.%host%.%context%,attr=#attribute#",
+            "resultAlias": "tomcat.manager.%host%.%context%",
             "attributes": [
                 "activeSessions",
                 "expiredSessions"
@@ -26,7 +26,7 @@
         },
         {
             "objectName": "Catalina:type=GlobalRequestProcessor,name=\"http-nio-*\"",
-            "resultAlias": "tomcat.global-request-processor.http-nio,attr=#attribute#",
+            "resultAlias": "tomcat.global-request-processor.http-nio",
             "attributes": [
                 "bytesReceived",
                 "bytesSent",
@@ -37,7 +37,7 @@
         },
         {
             "objectName": "Catalina:type=GlobalRequestProcessor,name=\"ajp-nio-*\"",
-            "resultAlias": "tomcat.global-request-processor.ajp-nio,attr=#attribute#",
+            "resultAlias": "tomcat.global-request-processor.ajp-nio",
             "attributes": [
                 "bytesReceived",
                 "bytesSent",
@@ -48,7 +48,7 @@
         },
         {
             "objectName": "Catalina:type=DataSource,context=*,host=*,class=javax.sql.DataSource,name=*",
-            "resultAlias": "tomcat.data-source.%host%.%context%.%name%,attr=#attribute#",
+            "resultAlias": "tomcat.data-source.%host%.%context%.%name%",
             "attributes": [
                 "numActive",
                 "numIdle"
@@ -56,7 +56,7 @@
         },
         {
             "objectName": "Catalina:type=DataSource,class=javax.sql.DataSource,name=*",
-            "resultAlias": "tomcat.data-source.%name%,attr=#attribute#",
+            "resultAlias": "tomcat.data-source.%name%",
             "attributes": [
                 "numActive",
                 "numIdle"
@@ -64,14 +64,14 @@
         },
         {
             "objectName": "tomcat.jdbc:type=ConnectionPool,engine=Catalina,context=*,host=*,class=org.apache.tomcat.jdbc.pool.DataSource,name=*",
-            "resultAlias": "tomcat.jdbc-pool.%host%.%context%.%name%,attr=#attribute#",
+            "resultAlias": "tomcat.jdbc-pool.%host%.%context%.%name%",
             "attributes": [
                 "WaitCount"
             ]
         },
         {
             "objectName": "Catalina:j2eeType=Servlet,name=*,WebModule=*,J2EEApplication=none,J2EEServer=none",
-            "resultAlias": "tomcat.servlet.%WebModule%.%name%,attr=#attribute#",
+            "resultAlias": "tomcat.servlet.%WebModule%.%name%",
             "attributes": [
                 "errorCount",
                 "processingTime",

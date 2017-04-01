@@ -3,7 +3,7 @@
     "queries": [
         {
             "objectName": "java.lang:type=Memory",
-            "resultAlias": "jvm.memory.#attribute#,key=#key#",
+            "resultAlias": "jvm.memory",
             "attributes": [
                 {
                     "name": "HeapMemoryUsage",
@@ -18,7 +18,7 @@
         },
         {
             "objectName": "java.lang:type=MemoryPool,name=*",
-            "resultAlias": "jvm.memory.pool.%name%.#attribute#,key=#key#",
+            "resultAlias": "jvm.memory.pool.%name%",
             "attributes": [
                 {
                     "name": "Usage",

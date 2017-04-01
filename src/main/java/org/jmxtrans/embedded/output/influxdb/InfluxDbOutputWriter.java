@@ -151,13 +151,20 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			for (QueryResult result : results) {
 				String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
 		        logger.debug(msg);
-				writeInvocationResult(result.getName(), result.getValue());
+		        
+		        String metricName = result.getName();
+		        Object value = result.getValue();
+		        
+		        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(this.getStrategy(), metricName, value, tags, SystemClock.now());
+		        batchedMetrics.add(metric);
+		        
 			}
 			
 	        String body = convertMetricsToLines(batchedMetrics);
 	        String queryString = buildQueryString();
 	    	logger.debug( "Sending to influx (" + url + "):\n" + body);
 	        batchedMetrics.clear();
+	        
 	        sendMetrics(queryString, body);
 			 
 		} catch (Exception e) {
@@ -165,18 +172,6 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			logger.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
 		}
 	}
-	
-	
-    public void writeInvocationResult(String invocationName, Object value) throws IOException {
-        if(!enabled) return;
-        writeQueryResult(invocationName, null, value);
-    }
-
-    public void writeQueryResult(String metricName, String metricType, Object value) throws IOException {
-        if(!enabled) return;
-        InfluxMetric metric = InfluxMetricConverter.convertToInfluxMetric(this.getStrategy(), metricName, value, tags, SystemClock.now());
-        batchedMetrics.add(metric);
-    }
 
     private void sendMetrics(String queryString, String body) throws IOException {
         HttpURLConnection conn = createAndConfigureConnection();

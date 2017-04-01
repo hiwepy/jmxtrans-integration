@@ -8,7 +8,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jmxtrans.versin>263</jmxtrans.versin>
+		<jmxtrans.versin>264</jmxtrans.versin>
 		<junit.version>4.12</junit.version>
 		<servlet-api.version>3.0.1</servlet-api.version>
 		<slf4j.version>1.7.21</slf4j.version>
@@ -417,10 +417,16 @@
 		<!-- https://mvnrepository.com/artifact/net.sf.jpathwatch/jpathwatch <dependency> 
 			<groupId>net.sf.jpathwatch</groupId> <artifactId>jpathwatch</artifactId> 
 			<version>0.95</version> </dependency> -->
-
+		
 		<dependency>
 			<groupId>org.jmxtrans.embedded</groupId>
 			<artifactId>embedded-jmxtrans</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- <dependency>
