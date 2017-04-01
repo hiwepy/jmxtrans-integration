@@ -76,6 +76,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	private Proxy proxy;
 	
     public InfluxDbOutputWriter() {
+    	
     }
 
     /**
@@ -87,16 +88,18 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         enabled = getBooleanSetting(SETTING_ENABLED, true);
     	
         if(!enabled) return;
+
+        //从新定义ResultNameStrategy
+        setStrategy(new ExtendedResultNameStrategy());
     	
         String urlStr = getUrl(getStringSetting("url"));
-        database = getDatabase(getStringSetting("database"));
+        database = getStrategy().resolveExpression(getDatabase(getStringSetting("database")));
         user = getUser(getStringSetting("user"));
         password = getPassword(getStringSetting("password"));
         retentionPolicy = getStringSetting("retentionPolicy", null);
         String tagsStr = getStringSetting("tags", "");
         
-        //从新定义ResultNameStrategy
-        setStrategy(new ExtendedResultNameStrategy());
+       
         
         tags = InfluxMetricConverter.tagsFromCommaSeparatedString(this.getStrategy(),tagsStr);
         connectTimeoutMillis = getIntSetting("connectTimeoutMillis", 3000);
@@ -140,7 +143,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         appendParamIfNotEmptyOrNull(sb, "rp", retentionPolicy);
         return sb.toString();
     }
-
+    
 	@Override
 	public void write(Iterable<QueryResult> results) {
 		
