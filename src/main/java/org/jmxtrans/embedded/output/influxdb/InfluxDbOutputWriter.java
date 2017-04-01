@@ -76,6 +76,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	private Proxy proxy;
 	
     public InfluxDbOutputWriter() {
+    	
     }
 
     /**
@@ -89,7 +90,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         if(!enabled) return;
     	
         String urlStr = getUrl(getStringSetting("url"));
-        database = getDatabase(getStringSetting("database"));
+        database = getStrategy().resolveExpression(getDatabase(getStringSetting("database")));
         user = getUser(getStringSetting("user"));
         password = getPassword(getStringSetting("password"));
         retentionPolicy = getStringSetting("retentionPolicy", null);
