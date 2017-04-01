@@ -88,10 +88,10 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
     	
         if(!enabled) return;
     	
-        String urlStr = getStringSetting("url",getUrl());
-        database = getStringSetting("database",getDatabase());
-        user = getStringSetting("user", getUser());
-        password = getStringSetting("password", getPassword());
+        String urlStr = getUrl(getStringSetting("url"));
+        database = getDatabase(getStringSetting("database"));
+        user = getUser(getStringSetting("user"));
+        password = getPassword(getStringSetting("password"));
         retentionPolicy = getStringSetting("retentionPolicy", null);
         String tagsStr = getStringSetting("tags", "");
         
@@ -272,21 +272,21 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         }
         return sb.toString();
     }
-
-	public String getUrl() {
-		return "http://127.0.0.1:8086";
+ 
+	public String getUrl(String url) {
+		return url== null ? "http://127.0.0.1:8086" : url;
 	}
 
-	public String getDatabase() {
-		return "ENV_Metrics";
+	public String getDatabase(String database) {
+		return database== null ? "ENV_Metrics" : database;
 	}
 
-	public String getUser() {
-		return null;
+	public String getUser(String user) {
+		return user;
 	}
 
-	public String getPassword() {
-		return null;
+	public String getPassword(String password) {
+		return password;
 	}
 
 }
