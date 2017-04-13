@@ -149,12 +149,15 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 		
 		try {
 			if(!enabled) return;
-			logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			if(logger.isDebugEnabled()){
+				logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			}
 			
 			for (QueryResult result : results) {
-				String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
-		        logger.debug(msg);
-		        
+		        if(logger.isDebugEnabled()){
+		        	String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
+		        	logger.debug(msg);
+		        }
 		        String metricName = result.getName();
 		        Object value = result.getValue();
 		        
@@ -165,14 +168,18 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			
 	        String body = convertMetricsToLines(batchedMetrics);
 	        String queryString = buildQueryString();
-	    	logger.debug( "Sending to influx (" + url + "):\n" + body);
+	        if(logger.isDebugEnabled()){
+	        	logger.debug( "Sending to influx (" + url + "):\n" + body);
+	        }
 	        batchedMetrics.clear();
 	        
 	        sendMetrics(queryString, body);
 			 
 		} catch (Exception e) {
 			exceptionCounter.incrementAndGet();
-			logger.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
+			if(logger.isWarnEnabled()){
+				logger.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
+			}
 		}
 	}
 
@@ -193,7 +200,9 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
             throw new RuntimeException("Failed to write metrics, response code: " + responseCode  + ", response message: " + urlConnection.getResponseMessage());
         }
         String response = readResponse(urlConnection);
-        logger.debug("Response from influx: " + response);
+        if(logger.isDebugEnabled()){
+        	logger.debug("Response from influx: " + response);
+        }
     }
 
     private HttpURLConnection createAndConfigureConnection() throws ProtocolException {
@@ -276,7 +285,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	}
 
 	public String getDatabase(String database) {
-		return database== null ? "ENV_Metrics" : database;
+		return database== null ? "Metrics_127.0.0.1" : database;
 	}
 
 	public String getUser(String user) {
