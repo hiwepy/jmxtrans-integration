@@ -50,6 +50,8 @@ import org.jmxtrans.embedded.util.io.IoRuntimeException;
 import org.jmxtrans.embedded.util.io.IoUtils;
 import org.jmxtrans.embedded.util.io.IoUtils2;
 import org.jmxtrans.embedded.util.time.SystemClock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Output writer for InfluxDb.
@@ -58,7 +60,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 
 	public final static String SETTING_ENABLED = "enabled";
 	private final AtomicInteger exceptionCounter = new AtomicInteger();
-	
+	private final Logger LOG = LoggerFactory.getLogger(InfluxDbOutputWriter.class);
     private URL url;
     private String database;
     private String user; // Null if not configured
@@ -99,8 +101,6 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         retentionPolicy = getStringSetting("retentionPolicy", null);
         String tagsStr = getStringSetting("tags", "");
         
-       
-        
         tags = InfluxMetricConverter.tagsFromCommaSeparatedString(this.getStrategy(),tagsStr);
         connectTimeoutMillis = getIntSetting("connectTimeoutMillis", 3000);
         readTimeoutMillis = getIntSetting("readTimeoutMillis", 5000);
@@ -110,17 +110,17 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getStringSetting(SETTING_PROXY_HOST), getIntSetting(SETTING_PROXY_PORT)));
 		}
 		
-		logger.info("Starting Stackdriver writer connected to '{}', proxy {} ...", url, proxy);
+        if(LOG.isInfoEnabled()){
         
-		
-		
-        logger.info( "InfluxDbOutputWriter is configured with url=" + urlStr
-                + ", database=" + database
-                + ", user=" + user
-                + ", password=" + (password != null ? "****" : null)
-                + ", tags=" + tagsStr
-                + ", connectTimeoutMills=" + connectTimeoutMillis
-                + ", readTimeoutMillis=" + readTimeoutMillis);
+			LOG.info("Starting Stackdriver writer connected to '{}', proxy {} ...", url, proxy);
+	        LOG.info( "InfluxDbOutputWriter is configured with url=" + urlStr
+	                + ", database=" + database
+	                + ", user=" + user
+	                + ", password=" + (password != null ? "****" : null)
+	                + ", tags=" + tagsStr
+	                + ", connectTimeoutMills=" + connectTimeoutMillis
+	                + ", readTimeoutMillis=" + readTimeoutMillis);
+        }
     }
 
     private String getWriteEndpointForUrlStr(String urlStr) {
@@ -149,12 +149,15 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 		
 		try {
 			if(!enabled) return;
-			logger.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			if(LOG.isDebugEnabled()){
+				LOG.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
+			}
 			
 			for (QueryResult result : results) {
-				String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
-		        logger.debug(msg);
-		        
+		        if(LOG.isDebugEnabled()){
+		        	String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
+		        	LOG.debug(msg);
+		        }
 		        String metricName = result.getName();
 		        Object value = result.getValue();
 		        
@@ -165,14 +168,18 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			
 	        String body = convertMetricsToLines(batchedMetrics);
 	        String queryString = buildQueryString();
-	    	logger.debug( "Sending to influx (" + url + "):\n" + body);
+	        if(LOG.isDebugEnabled()){
+	        	LOG.debug( "Sending to influx (" + url + "):\n" + body);
+	        }
 	        batchedMetrics.clear();
 	        
 	        sendMetrics(queryString, body);
 			 
 		} catch (Exception e) {
 			exceptionCounter.incrementAndGet();
-			logger.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
+			if(LOG.isWarnEnabled()){
+				LOG.warn("Failure to send result to InfluxDb '{}' with proxy {}", url, proxy, e);
+			}
 		}
 	}
 
@@ -193,7 +200,9 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
             throw new RuntimeException("Failed to write metrics, response code: " + responseCode  + ", response message: " + urlConnection.getResponseMessage());
         }
         String response = readResponse(urlConnection);
-        logger.debug("Response from influx: " + response);
+        if(LOG.isDebugEnabled()){
+        	LOG.debug("Response from influx: " + response);
+        }
     }
 
     private HttpURLConnection createAndConfigureConnection() throws ProtocolException {
@@ -276,7 +285,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 	}
 
 	public String getDatabase(String database) {
-		return database== null ? "ENV_Metrics" : database;
+		return database== null ? "Metrics_127.0.0.1" : database;
 	}
 
 	public String getUser(String user) {
