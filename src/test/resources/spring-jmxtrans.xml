@@ -13,6 +13,8 @@
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
+    <description>Spring Jmxtrans Configuration</description>
+    
     <bean id="jmxtrans" class="org.jmxtrans.embedded.spring.EmbeddedJmxTransFactory" destroy-method="destroy" scope="singleton">
     	<!-- JMX对象名称  -->
     	<property name="beanName" value="jmxtrans"/>
