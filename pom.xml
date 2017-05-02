@@ -13,6 +13,8 @@
 		<servlet-api.version>3.0.1</servlet-api.version>
 		<slf4j.version>1.7.21</slf4j.version>
 		<spring.version>4.3.6.RELEASE</spring.version>
+		<log4j.version>1.2.17</log4j.version>
+		<druid.version>1.0.29</druid.version>
 	</properties>
 
 	<build>
@@ -266,6 +268,24 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
+			
+			<!-- Log4j 1.x -->
+			
+			<!-- 
+			Log4j是Apache的一个开放源代码项目，通过使用Log4j，我们可以控制日志信息输送的目的地是控制台、文件、GUI组件，
+			甚至是套接口服务器、NT的事件记录器、UNIX Syslog守护进程等
+			-->
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<!-- slf4j到 log4j1的桥梁 -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
 
 
 			<!-- This module contains most of the core logic of JmxTrans. -->
@@ -381,6 +401,13 @@
 				</exclusions>
 			</dependency>
 			
+			<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+			<dependency>
+			    <groupId>com.alibaba</groupId>
+			    <artifactId>druid</artifactId>
+			    <version>${druid.version}</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.influxdb</groupId>
 				<artifactId>influxdb-java</artifactId>
@@ -391,6 +418,7 @@
 	</dependencyManagement>
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -406,6 +434,18 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		
 		<!-- <dependency> <groupId>com.google.code.findbugs</groupId> <artifactId>jsr305</artifactId> 
 			<version>2.0.1</version> <optional>true</optional> </dependency>  -->
 		<dependency>
@@ -417,6 +457,13 @@
 		<!-- https://mvnrepository.com/artifact/net.sf.jpathwatch/jpathwatch <dependency> 
 			<groupId>net.sf.jpathwatch</groupId> <artifactId>jpathwatch</artifactId> 
 			<version>0.95</version> </dependency> -->
+		
+		<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>druid</artifactId>
+		    <scope>provided</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.jmxtrans.embedded</groupId>
@@ -434,7 +481,20 @@
 			<artifactId>influxdb-java</artifactId>
 		</dependency> -->
 		
-
+		<!-- https://mvnrepository.com/artifact/org.cyclopsgroup/jmxterm 
+		<dependency>
+		    <groupId>org.cyclopsgroup</groupId>
+		    <artifactId>jmxterm</artifactId>
+		    <version>1.0-alpha-4</version>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/org.softee/pojo-mbean -->
+		<dependency>
+		    <groupId>org.softee</groupId>
+		    <artifactId>pojo-mbean</artifactId>
+		    <version>1.1</version>
+		</dependency>
+		
+		
 	</dependencies>
 
 </project>

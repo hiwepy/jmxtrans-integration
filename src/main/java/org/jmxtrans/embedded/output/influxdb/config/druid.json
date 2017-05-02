@@ -1,0 +1,73 @@
+{
+    "queries": [
+        {
+            "objectName": "com.alibaba.druid:type=DruidDataSource,id=*",
+            "resultAlias": "druid.datasource.stat.%id%",
+            "attributes": [
+                "Name",
+                "DbType",
+                "Enable",
+                "ActiveCount",
+                "ActivePeak",
+                "CachedPreparedStatementCount",
+                "CachedPreparedStatementAccessCount",
+                "CachedPreparedStatementDeleteCount",
+                "CachedPreparedStatementHitCount",
+                "CachedPreparedStatementMissCount",
+                "CloseCount",
+                "ClosedPreparedStatementCount",
+                "CommitCount",
+                "ConnectCount",
+                "ConnectErrorCount",
+                "CreateCount",
+                "CreateErrorCount",
+                "DestroyCount",
+                "DiscardCount",
+                "DupCloseCount",
+                "ErrorCount",
+                "NotEmptySignalCount",
+                "NotEmptyWaitCount",
+                "NotEmptyWaitThreadCount",
+                "PoolingCount",
+                "PoolingPeak",
+                "PreparedStatementCount",
+                "PreparedStatementCacheDeleteCount",
+                "PreparedStatementCacheAccessCount",
+                "PreparedStatementCacheMissCount",
+                "PreparedStatementCacheHitCount",
+                "PreparedStatementCacheCurrentCount",
+                "RecycleCount",
+                "RemoveAbandonedCount",
+                "ResetCount",
+                "ReusePreparedStatementCount",
+                "RollbackCount",
+                "StartTransactionCount",
+                "WaitThreadCount"
+            ]
+        },
+        {
+            "objectName": "com.alibaba.druid:type=DruidDataSource",
+            "resultAlias": "druid.datasource",
+            "attributes": [
+                "ResetCount",
+                "DataSourceList"
+            ]
+        },
+        {
+            "objectName": "com.alibaba.druid:type=DruidDriver",
+            "resultAlias": "druid.driver",
+            "attributes": [
+                "AcceptPrefix",
+                "ConnectCount",
+                "DataSourceUrls",
+                "DruidVersion",
+                "MajorVersion",
+                "MinorVersion"
+            ]
+        },
+        {
+            "objectName": "com.alibaba.druid:type=DruidStatService",
+            "resultAlias": "druid.service"
+        }
+    ]
+}

@@ -1,5 +1,43 @@
 {
     "queries": [
+    	{
+            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"http-nio-*\"",
+            "resultAlias": "tomcat.global-request-processor.http-nio",
+            "attributes": [
+                "bytesReceived",
+                "bytesSent",
+                "errorCount",
+                "maxTime",
+                "processingTime",
+                "requestCount"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"ajp-nio-*\"",
+            "resultAlias": "tomcat.global-request-processor.ajp-nio",
+            "attributes": [
+                "bytesReceived",
+                "bytesSent",
+                "errorCount",
+                "maxTime",
+                "processingTime",
+                "requestCount"
+            ]
+        },
+        {
+            "objectName": "Catalina:type=Manager,context=*,host=*",
+            "resultAlias": "tomcat.manager.%host%.%context%",
+            "attributes": [
+                "activeSessions",
+                "expiredSessions",
+                "rejectedSessions",
+                "sessionAverageAliveTime",
+                "sessionCounter",
+                "sessionCreateRate",
+                "sessionExpireRate",
+                "sessionMaxAliveTime"
+            ]
+        },
         {
             "objectName": "Catalina:type=ThreadPool,name=\"http-nio-*\"",
             "resultAlias": "tomcat.thread-pool.http-nio",
@@ -14,36 +52,6 @@
             "attributes": [
                 "currentThreadCount",
                 "currentThreadsBusy"
-            ]
-        },
-        {
-            "objectName": "Catalina:type=Manager,context=*,host=*",
-            "resultAlias": "tomcat.manager.%host%.%context%",
-            "attributes": [
-                "activeSessions",
-                "expiredSessions"
-            ]
-        },
-        {
-            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"http-nio-*\"",
-            "resultAlias": "tomcat.global-request-processor.http-nio",
-            "attributes": [
-                "bytesReceived",
-                "bytesSent",
-                "errorCount",
-                "processingTime",
-                "requestCount"
-            ]
-        },
-        {
-            "objectName": "Catalina:type=GlobalRequestProcessor,name=\"ajp-nio-*\"",
-            "resultAlias": "tomcat.global-request-processor.ajp-nio",
-            "attributes": [
-                "bytesReceived",
-                "bytesSent",
-                "errorCount",
-                "processingTime",
-                "requestCount"
             ]
         },
         {

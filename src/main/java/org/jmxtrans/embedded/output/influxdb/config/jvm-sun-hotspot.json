@@ -51,29 +51,47 @@
             "resultAlias": "jvm.thread",
             "attributes": [
                 "ThreadCount",
+                "DaemonThreadCount",
                 "PeakThreadCount",
-                "CurrentThreadCpuTime"
+                "TotalStartedThreadCount",
+                "CurrentThreadCpuTime",
+                "CurrentThreadUserTime"
             ]
         },
         {
             "objectName": "java.lang:type=ClassLoading",
             "resultAlias": "jvm.classes",
             "attributes": [
-                "LoadedClassCount"
+                "LoadedClassCount",
+                "UnloadedClassCount",
+                "TotalLoadedClassCount"
             ]
         },
         {
             "objectName": "java.lang:type=OperatingSystem",
             "resultAlias": "jvm.os",
             "attributes": [
+            	"OpenFileDescriptorCount",
                 "CommittedVirtualMemorySize",
                 "FreePhysicalMemorySize",
                 "FreeSwapSpaceSize",
-                "OpenFileDescriptorCount",
+                "ProcessCpuLoad",
                 "ProcessCpuTime",
-                "SystemLoadAverage"
+                "SystemCpuLoad",
+                "SystemLoadAverage",
+                "TotalPhysicalMemorySize",
+                "TotalSwapSpaceSize"
             ]
-
+        },
+        {
+            "objectName": "java.nio:type=BufferPool,name=*",
+            "resultAlias": "jvm.nio.%name%",
+            "attributes": [
+                "Name",
+                "Count",
+                "MemoryUsed",
+                "TotalCapacity"
+            ]
         }
     ]
 }
