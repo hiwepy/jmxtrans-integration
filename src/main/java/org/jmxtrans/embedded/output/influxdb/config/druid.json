@@ -2,7 +2,7 @@
     "queries": [
         {
             "objectName": "com.alibaba.druid:type=DruidDataSource,id=*",
-            "resultAlias": "druid.datasource.stat.%id%",
+            "resultAlias": "druid.datasource.stat",
             "attributes": [
                 "Name",
                 "DbType",
@@ -46,14 +46,6 @@
             ]
         },
         {
-            "objectName": "com.alibaba.druid:type=DruidDataSource",
-            "resultAlias": "druid.datasource",
-            "attributes": [
-                "ResetCount",
-                "DataSourceList"
-            ]
-        },
-        {
             "objectName": "com.alibaba.druid:type=DruidDriver",
             "resultAlias": "druid.driver",
             "attributes": [
@@ -64,10 +56,6 @@
                 "MajorVersion",
                 "MinorVersion"
             ]
-        },
-        {
-            "objectName": "com.alibaba.druid:type=DruidStatService",
-            "resultAlias": "druid.service"
         }
     ]
 }

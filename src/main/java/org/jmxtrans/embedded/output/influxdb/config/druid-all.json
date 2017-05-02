@@ -2,7 +2,7 @@
     "queries": [
         {
             "objectName": "com.alibaba.druid:type=DruidDataSource,id=*",
-            "resultAlias": "druid.datasource.stat.%id%",
+            "resultAlias": "druid.datasource.stat",
             "attributes": [
                 "ActiveConnectionStackTrace",
                 "ActiveCount",
@@ -104,14 +104,6 @@
                 "ValidationQueryTimeout",
                 "Version",
                 "WaitThreadCount"
-            ]
-        },
-        {
-            "objectName": "com.alibaba.druid:type=DruidDataSource",
-            "resultAlias": "druid.datasource",
-            "attributes": [
-                "ResetCount",
-                "DataSourceList"
             ]
         },
         {
