@@ -26,9 +26,10 @@
 		<property name="configurationUrls">
 			<list>
              	<value>classpath:jmxtrans.json</value>  
-             	<value>classpath:org/jmxtrans/embedded/config/tomcat-7.json</value>
-             	<value>classpath:org/jmxtrans/embedded/config/jmxtrans-internals.json</value> 
-             	<value>classpath:org/jmxtrans/embedded/config/jvm-sun-hotspot.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/druid.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/tomcat-7.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jmxtrans-internals.json</value> 
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jvm-sun-hotspot.json</value>
          	</list>
 		</property>
     </bean>
