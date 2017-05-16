@@ -17,11 +17,38 @@
     
     <description>Spring Jmxtrans Configuration</description>
     
+    <!-- 对象未创建: -->
+    <!-- 
     <jmxtrans:jmxtrans id="jmxtrans" ignore-configuration-not-found="true" configuration-scan-period-in-seconds="30">
         <jmxtrans:configuration>classpath:jmxtrans.json</jmxtrans:configuration>
-        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/config/tomcat-6.json</jmxtrans:configuration>
-        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/config/jmxtrans-internals.json</jmxtrans:configuration>
-        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/config/jvm-sun-hotspot.json</jmxtrans:configuration>
-    </jmxtrans:jmxtrans>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/druid.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/tomcat-7.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/jmxtrans-internals.json</jmxtrans:configuration>
+        <jmxtrans:configuration>classpath:org/jmxtrans/embedded/output/influxdb/config/jvm-sun-hotspot.json</jmxtrans:configuration>
+    </jmxtrans:jmxtrans> 
+    -->
+    
+    <bean id="jmxtrans" class="org.jmxtrans.embedded.spring.EmbeddedJmxTransFactory" destroy-method="destroy" scope="singleton">
+    	<!-- JMX对象名称  -->
+    	<property name="beanName" value="jmxtrans"/>
+    	<!-- 监听配置文件变化: 每60秒检测一次  -->
+    	<property name="configurationScanPeriodInSeconds" value="60"/>
+    	<!-- 如果未发现指定的配置文件 ，是否忽略 -->
+    	<property name="ignoreConfigurationNotFound" value="true"/>
+    	<!-- 初始配置文件 -->
+		<property name="configurationUrls">
+			<list>
+             	<value>classpath:jmxtrans.json</value>  
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/druid.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/tomcat-7.json</value>
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jmxtrans-internals.json</value> 
+             	<value>classpath:org/jmxtrans/embedded/output/influxdb/config/jvm-sun-hotspot.json</value>
+         	</list>
+		</property>
+    </bean>
+    
+    <bean class="org.jmxtrans.embedded.EmbeddedJmxTransLauncher">
+    	<property name="jmxtrans" ref="jmxtrans"/>
+    </bean>
 	
 </beans>
