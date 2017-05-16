@@ -70,6 +70,7 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
     private List<InfluxMetric> batchedMetrics = new ArrayList<InfluxMetric>();
     private int connectTimeoutMillis;
     private int readTimeoutMillis;
+    private int retryTimes;
     private boolean enabled;
     /**
 	 * Optional proxy for the http API calls
@@ -104,6 +105,8 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
         tags = InfluxMetricConverter.tagsFromCommaSeparatedString(this.getStrategy(),tagsStr);
         connectTimeoutMillis = getIntSetting("connectTimeoutMillis", 3000);
         readTimeoutMillis = getIntSetting("readTimeoutMillis", 5000);
+        retryTimes = getIntSetting("retryTimes", 10);
+        
         url = parseUrlStr(getWriteEndpointForUrlStr(urlStr));
         
         if (getStringSetting(SETTING_PROXY_HOST, null) != null && !getStringSetting(SETTING_PROXY_HOST).isEmpty()) {
@@ -152,7 +155,9 @@ public class InfluxDbOutputWriter extends AbstractOutputWriter implements Output
 			if(LOG.isDebugEnabled()){
 				LOG.debug("Export to '{}', proxy {} metrics {}", url, proxy, results);
 			}
-			
+			if( exceptionCounter.get() > retryTimes){
+				return;
+			}
 			for (QueryResult result : results) {
 		        if(LOG.isDebugEnabled()){
 		        	String msg = result.getName() + " " + result.getValue() + " " + result.getEpoch(TimeUnit.SECONDS);
