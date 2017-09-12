@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
  * 其次，主机B接收到“UDP－NetBIOS－NS”询问包， 假设主机B正确安装了NetBIOS服务........... 而且137端口开放，
  * 则主机B会向主机A发送一个“UDP－NetBIOS－NS”应答包，即发Answer包给主机A。 并利用UDP(NetBIOS Name
  * Service)来快速获取远程主机MAC地址的方法
- * @author 		： <a href="mailto:hnxyhcwdl1003@163.com">wandalong</a>
- * @date		： Dec 18, 2015 9:37:04 AM
  */
 public class MacAddressUtils {
 
@@ -160,16 +158,11 @@ public class MacAddressUtils {
 
 	/**
 	 * 
-	 * @description: 获取远程主机的mac地址
-	 * @author : wandalong
-	 * @date 2015-6-2 
-	 * @time 上午09:23:46
+	 * @description	： 获取远程主机的mac地址
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:00
 	 * @param remoteIPAddr
 	 * @return
-	 * @throws Exception
-	 * @modify by:
-	 * @modify date :
-	 * @modify description :
 	 */
 	public static final String getRemoteMacAddr(String remoteIPAddr) {
 		try {
@@ -190,13 +183,10 @@ public class MacAddressUtils {
 	
 	/**
 	 * 
-	 *@描述：获取当前操作系统名称. return 操作系统名称 例如:windows,Linux,Unix等
-	 *@创建人:wandalong
-	 *@创建时间:2014-12-26下午02:28:56
-	 *@修改人:
-	 *@修改时间:
-	 *@修改描述:
-	 *@return
+	 * @description	： 获取当前操作系统名称. return 操作系统名称 例如:windows,Linux,Unix等
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:09
+	 * @return
 	 */
 	public static String getOSName() {
 		return System.getProperty("os.name").toLowerCase();
@@ -204,14 +194,11 @@ public class MacAddressUtils {
 
 	/**
 	 * 
-	 *@描述：获取widnowXp网卡的mac地址
-	 *@创建人:wandalong
-	 *@创建时间:2014-12-26下午02:29:09
-	 *@修改人:
-	 *@修改时间:
-	 *@修改描述:
-	 *@param execStr
-	 *@return
+	 * @description	： 获取widnowXp网卡的mac地址
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:17
+	 * @param execStr
+	 * @return
 	 */
 	public static String getWindowXPMacAddress(String execStr) {
 		String mac = null;
@@ -257,11 +244,10 @@ public class MacAddressUtils {
 	}
 
 	/**
-	 * 
 	 * @description	： 获取widnow7网卡的mac地址
-	 * @author 		： <a href="mailto:hnxyhcwdl1003@163.com">wandalong</a>
-	 * @date 		：Jun 17, 2016 11:52:23 PM
-	 * @return		：
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:27
+	 * @return
 	 */
 	public static String getWindow7MacAddress() {
 		// 获得网络接口对象（即网卡），并得到mac地址，mac地址存在于一个byte数组中。
@@ -344,13 +330,10 @@ public class MacAddressUtils {
 	
 	/**
 	 * 
-	 *@描述：获取Linux网卡的mac地址
-	 *@创建人:wandalong
-	 *@创建时间:2014-12-26下午02:30:01
-	 *@修改人:
-	 *@修改时间:
-	 *@修改描述:
-	 *@return
+	 * @description	： 获取Linux网卡的mac地址
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:36
+	 * @return
 	 */
 	public static String getLinuxMacAddress() {
 		String mac = null;
@@ -389,13 +372,10 @@ public class MacAddressUtils {
 
 	/**
 	 * 
-	 *@描述：获取Unix网卡的mac地址
-	 *@创建人:wandalong
-	 *@创建时间:2014-12-26下午02:30:29
-	 *@修改人:
-	 *@修改时间:
-	 *@修改描述:
-	 *@return
+	 * @description	： 获取Unix网卡的mac地址
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:43
+	 * @return
 	 */
 	public static String getUnixMacAddress() {
 		String mac = null;
@@ -436,13 +416,10 @@ public class MacAddressUtils {
 
 	/**
 	 * 
-	 *@描述：获取MAC地址
-	 *@创建人:wandalong
-	 *@创建时间:2014-12-26下午02:30:50
-	 *@修改人:
-	 *@修改时间:
-	 *@修改描述:
-	 *@return
+	 * @description	： 获取MAC地址
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:32:50
+	 * @return
 	 */
 	public static String getMacAddress() {
 		String os = getOSName();
@@ -465,16 +442,10 @@ public class MacAddressUtils {
 	}
 
 	/**
-	 * 
-	 * @description: jdk1.4获取系统命令路径 ：SystemRoot=C:\WINDOWS
-	 * @author : wandalong
-	 * @date 下午03:26:49 2014-12-26 
+	 * @description	： jdk1.4获取系统命令路径 ：SystemRoot=C:\WINDOWS
+	 * @author 		： <a href="https://github.com/vindell">vindell</a>
+	 * @date 		：2017年9月12日 下午11:33:00
 	 * @return
-	 * @return String 返回类型
-	 * @throws  
-	 * @modify by:
-	 * @modify date :
-	 * @modify description : TODO(描述修改内容)
 	 */
 	public static String getSystemRoot() {
 		String cmd = null;
